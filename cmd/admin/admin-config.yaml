@@ -1,0 +1,16 @@
+# 服务端口
+http:
+  port: 29091
+database:
+  # 数据库类型 取值mysql或postgresql
+  driver: mysql
+  # 数据库IP
+  host: 127.0.0.1
+  # 数据库端口
+  port: 5432
+  # 数据库名称
+  name: db_flygoose
+  # 用户名
+  user: flygoose
+  # 密码
+  password: flygoose
