@@ -58,6 +58,6 @@ func (c *FileController) UploadImg() {
 	}
 
 	c.RespSuccess(iris.Map{
-		"filename": filepath.Join(c.Cfg.StaticImgDir, newFileName),
+		"filename": filepath.Join(configs.Flygoose_Url_Prefix, c.Cfg.StaticImgDir, newFileName),
 	}, "上传文件成功")
 }

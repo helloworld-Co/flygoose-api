@@ -13,7 +13,7 @@ import (
 var productLogger *zap.Logger
 
 func InitLog() {
-	initProductLog("./logs/flygoose_access.log")
+	initProductLog("./logs/flygoose.log")
 }
 
 func Info(msg string, fields ...zap.Field) {

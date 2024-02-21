@@ -3,9 +3,10 @@ package configs
 import (
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
 	"reflect"
+
+	"gopkg.in/yaml.v3"
 )
 
 // 全局配置文件实例
@@ -95,6 +96,6 @@ func CheckZeroValue(str interface{}) error {
 	return nil
 }
 
-const Admin_Url_Prefix = "/v8"
-
 const Flygoose_Url_Prefix = "/api"
+
+const Flygoose_Admin_Phone = "12345678901"

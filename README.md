@@ -1,5 +1,7 @@
 # flygoose
 
+！！！TODO: 需要改成2.0-rc版本的部署文档  下面这个还没改！！！
+
 ## 一、依赖
 
 + go 1.19+（需要自己安装），建议proxy修改为国内的地址，不然会被墙，参考[https://goproxy.cn/](https://goproxy.cn/)
@@ -7,7 +9,7 @@
 
 ## 二、架构
 
-![架构](./architecture.png)
+![架构](architecture.png)
 
 ## 三、部署文档
 
@@ -128,7 +130,7 @@ GET http://你的服务器ip:29091/v8/health
 
 ### 3.3 二进制文件部署
 
-1. 下载二进制文件，需要下载`flygoose`和`flygoose-admin`  地址：`http://gitlab.helloworld.net:8888/hw-api/flygoose/-/releases`
+1. 下载二进制文件，需要下载`flygoose`和`flygoose-admin`  地址：`https://github.com/helloworld-Co/flygoose-api/releases`
 2. 修改配置并保存文件
 
 ```yaml

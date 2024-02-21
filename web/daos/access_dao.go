@@ -4,8 +4,9 @@ import (
 	"flygoose/datasource"
 	"flygoose/pkg/models"
 	"flygoose/pkg/tlog"
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type AccessDao struct {
@@ -24,6 +25,24 @@ func (dao *AccessDao) FirstByUsernameAndPassword(username string, password strin
 		return nil, result.Error
 	}
 	return &admin, nil
+}
+
+func (dao *AccessDao) CountUsername(username string) (int64, error) {
+	var cnt int64
+	result := dao.db.Model(&models.Admin{}).Where("phone=? and status = 1", username).Count(&cnt)
+	if result.Error != nil {
+		tlog.Error2("查询初始化默认用户名失败", result.Error)
+		return -1, result.Error
+	}
+	return cnt, nil
+}
+
+func (dao *AccessDao) Create(m *models.Admin) error {
+	result := dao.db.Create(m)
+	if result.Error != nil {
+		tlog.Error2("AccessDao:Create出错", result.Error)
+	}
+	return result.Error
 }
 
 func (dao *AccessDao) Update(id int64, fields []string, admin *models.Admin) error {
