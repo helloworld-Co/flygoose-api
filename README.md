@@ -1,10 +1,7 @@
 # flygoose
 
-！！！TODO: 需要改成2.0-rc版本的部署文档  下面这个还没改！！！
-
 ## 一、依赖
 
-+ go 1.19+（需要自己安装），建议proxy修改为国内的地址，不然会被墙，参考[https://goproxy.cn/](https://goproxy.cn/)
 + mysql 8.0+ 或 postgresql 12+（需要自己安装）
 
 ## 二、架构
@@ -12,6 +9,61 @@
 ![架构](architecture.png)
 
 ## 三、部署文档
+
+### 3.1 二进制包部署
+
+1. 根据部署服务器对应的操作系统和CPU型号下载对应的二进制包，地址：[https://github.com/BLF2/flygoose-api/releases](https://github.com/BLF2/flygoose-api/releases)
+2. 以下配置修改为自己的配置并保存为`flygoose-config.yaml`，与第1步中下载的二进制文件放在同一个文件夹下
+   ```yaml
+   # 服务端口
+   http:
+     port: 29090
+   database:
+     # 数据库类型 取值mysql或postgresql
+     driver: mysql
+     # 数据库IP
+     host: 127.0.0.1
+     # 数据库端口
+     port: 3306
+     # 数据库名称
+     name: db_flygoose
+     # 用户名
+     user: root
+     # 密码
+     password: root
+   ```
+3. 给二进制文件赋执行权限并启动
+   ```shell
+   # 加执行权限
+   # 请将flygoose-api-xxx-xxx替换为下载下来的文件的名称
+   chomod +x flygoose-api-xxx-xxx
+   # 启动
+   # 请将flygoose-api-xxx-xxx替换为下载下来的文件的名称
+   nohup ./flygoose-api-xxx-xxx -c ./flygoose-config.yaml &
+   ```
+4. 测试
+   ```log
+   # 服务器上curl 测试  输出 {"code":1,"data":null,"message":"success"} 即认为成功
+   curl 127.0.0.1:29090/api/health
+   # 本地postman 测试 输出 {"code":1,"data":null,"message":"success"} 即认为成功
+   GET http://你的服务器ip:29090/api/health
+   ```
+
+
+
+
+
+
+
+-------------TODO 待完成
+### 3.2 本地打包部署
++ go 1.19+（需要自己安装），建议proxy修改为国内的地址，不然会被墙，参考[https://goproxy.cn/](https://goproxy.cn/)
+
+### 3.3 二次开发和本地调试
+
+
+### 3.3 
+
 
 ### 3.1 本地启动
 
@@ -21,38 +73,9 @@
 
    注意: Mysql8.0+ 字符集使用`utf8mb4`，排序规则使用 `utf8mb4_0900_ai_ci`，Postgresql创建数据库字符集为`utf8`
 
-#### 3.1.1 Admin启动
+#### 3.1.1 flygoose启动
 
-环境配置：flygoose/cmd/admin/admin-config.yaml
-
-```yml
-# 服务端口
-http:
-  port: 29091
-database:
-  # 数据库类型 取值mysql或postgresql
-  driver: mysql
-  # 数据库IP
-  host: 127.0.0.1
-  # 数据库端口
-  port: 3306
-  # 数据库名称
-  name: db_flygoose
-  # 用户名
-  user: flygoose
-  # 密码
-  password: flygoose
-```
-
-启动配置在`flygoose/cmd/admin/main.go`，下面这行：
-
-```go
-configPath := flag.String("c", "cmd/admin/admin-config.yaml", "指定配置文件路径")
-```
-
-#### 3.1.2 Flygoose启动
-
-dev环境配置：flygoose/cmd/flygoose/flygoose-config.yaml
+配置：cmd/flygoose/flygoose-config.yaml
 
 ```yaml
 # 服务端口
@@ -68,9 +91,9 @@ database:
   # 数据库名称
   name: db_flygoose
   # 用户名
-  user: flygoose
+  user: root
   # 密码
-  password: flygoose
+  password: root
 ```
 
 启动配置在`flygoose/cmd/flygoose/main.go`，下面这行：
@@ -79,7 +102,11 @@ database:
 configPath := flag.String("c", "cmd/flygoose/flygoose-config.yaml", "指定配置文件路径")
 ```
 
-### 3.2 打包部署
+### 3.2 本地打包部署
+
+
+
+### 3.
 
 1. 下载项目
 2. 修改配置文件 `cmd/admin/admin-config.yaml `和 `cmd/flygoose/flygoose-config.yaml`
