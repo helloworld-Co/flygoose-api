@@ -3,6 +3,7 @@ package datasource
 import (
 	"flygoose/configs"
 	"fmt"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -47,4 +48,36 @@ func InitPostgreSQL(cfg *configs.Config) {
 	}
 
 	masterDB = db
+}
+
+// 创建数据库
+func CheckAndCreateDatabase(cfg *configs.Config) (err error) {
+
+	dbName := cfg.Database.Name
+	if dbName == "" {
+		println("databasenameerror:数据库名称不能为空")
+		return
+	}
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/", cfg.Database.User, cfg.Database.Password, cfg.Database.Host)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix:   "",
+			SingularTable: true,
+		},
+	})
+	if err != nil {
+		println("sql.Open error %w\n", err)
+		return
+	}
+
+	println("sql open sucess:" + dsn)
+
+	createDB := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci", cfg.Database.Name)
+	db.Exec(createDB)
+	if err != nil {
+		println("db.Execerror %w\n", err)
+	}
+	println("createDB sucess :" + createDB)
+	return
 }
