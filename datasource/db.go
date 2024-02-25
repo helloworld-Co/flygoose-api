@@ -3,6 +3,8 @@ package datasource
 import (
 	"flygoose/configs"
 	"fmt"
+	"strings"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,34 +30,37 @@ func InitMySql(cfg *configs.Config) {
 		},
 	})
 	if err != nil {
-		//if strings.Contains(err.Error(), "Unknown database") {
-		//	//如果没有db 创建db
-		//	dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
-		//	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		//		NamingStrategy: schema.NamingStrategy{
-		//			TablePrefix:   "",
-		//			SingularTable: true,
-		//		},
-		//	})
-		//	if err != nil {
-		//		panic(err)
-		//	}
-		//	createDatabaseSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci", cfg.Database.Name)
-		//	tx := db.Exec(createDatabaseSql)
-		//	if tx.Error != nil {
-		//		panic(tx.Error)
-		//	}
-		//	//创建完成后再重新连接一次
-		//	dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
-		//	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		//		NamingStrategy: schema.NamingStrategy{
-		//			TablePrefix:   "",
-		//			SingularTable: true,
-		//		},
-		//	})
-		//} else {
-		panic(err)
-		//	}
+		if strings.Contains(err.Error(), "Unknown database") {
+			//如果没有db 创建db
+			dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
+			db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+				NamingStrategy: schema.NamingStrategy{
+					TablePrefix:   "",
+					SingularTable: true,
+				},
+			})
+			if err != nil {
+				panic(err)
+			}
+			createDatabaseSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci", cfg.Database.Name)
+			tx := db.Exec(createDatabaseSql)
+			if tx.Error != nil {
+				panic(tx.Error)
+			}
+			//创建完成后再重新连接一次
+			dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Name)
+			db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+				NamingStrategy: schema.NamingStrategy{
+					TablePrefix:   "",
+					SingularTable: true,
+				},
+			})
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			panic(err)
+		}
 
 	}
 
