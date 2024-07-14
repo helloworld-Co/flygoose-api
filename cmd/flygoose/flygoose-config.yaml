@@ -11,6 +11,6 @@ database:
   # 数据库名称
   name: db_flygoose
   # 用户名
-  user: root
+  user: flygoose
   # 密码
-  password: root
+  password: flygoose
