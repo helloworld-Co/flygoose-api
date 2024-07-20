@@ -11,7 +11,6 @@ import (
 	"flygoose/web/controllers/flygoose"
 	"flygoose/web/daos"
 	"fmt"
-	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"go.uber.org/zap"
@@ -27,7 +26,8 @@ type FlygooseApp struct {
 func NewFlygooseApp(cfg *configs.Config) *FlygooseApp {
 	app := new(FlygooseApp)
 	app.Cfg = cfg
-	app.Engine = iris.Default()
+	app.Engine = iris.New()
+	app.Engine.Use(Cors)
 	return app
 }
 
@@ -58,7 +58,7 @@ func (m *FlygooseApp) InitDir() {
 	tools.CreateDir(filepath.Join(m.Cfg.ExecuteDir, m.Cfg.StaticImgDir))
 
 	var abcStaticDir = filepath.Join(m.Cfg.ExecuteDir, m.Cfg.StaticDir)
-	m.Engine.HandleDir(configs.Flygoose_Url_Prefix+"/static", abcStaticDir)
+	m.Engine.HandleDir("/", abcStaticDir) //http://192.168.1.6:29090/img/aa.jpg
 }
 
 func (m *FlygooseApp) initLog() {
@@ -123,17 +123,7 @@ func (m *FlygooseApp) initAutoMigrate() {
 }
 
 func (m *FlygooseApp) initRouter() {
-	// 跨域
-	crs := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, // allows everything, use that to change the hosts.
-		AllowedMethods: []string{"GET", "POST"},
-		AllowedHeaders: []string{"*"},
-		//在这里需要加Authorization字段，不然js无法添加自定义header
-		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "Authorization"},
-		AllowCredentials: true,
-	})
-
-	v1 := m.Engine.Party(configs.Flygoose_Url_Prefix, crs).AllowMethods(iris.MethodOptions)
+	v1 := m.Engine.Party(configs.Flygoose_Url_Prefix)
 	{
 		mvc.New(v1.Party("/site")).Handle(flygoose.NewSiteController())
 		mvc.New(v1.Party("/blog")).Handle(flygoose.NewBlogController())
