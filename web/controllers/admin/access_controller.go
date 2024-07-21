@@ -48,8 +48,11 @@ func (c *AccessController) Login() {
 func (c *AccessController) Logout() {
 	token := c.Ctx.Request().Header.Get("token")
 	if token == "" {
-		c.RespFailedMessage("token参数错误")
-		return
+		authorization := c.Ctx.Request().Header.Get("Authorization")
+		if authorization == "" {
+			c.RespFailedMessage("token参数错误")
+			return
+		}
 	}
 
 	admin, err := c.AccessSrv.FirstAdminByToken(token)

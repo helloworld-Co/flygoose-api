@@ -26,8 +26,9 @@ type FlygooseApp struct {
 func NewFlygooseApp(cfg *configs.Config) *FlygooseApp {
 	app := new(FlygooseApp)
 	app.Cfg = cfg
-	app.Engine = iris.New()
-	app.Engine.Use(Cors)
+	app.Engine = iris.Default()
+	//app.Engine = iris.New()
+	//app.Engine.Use(Cors)
 	return app
 }
 
