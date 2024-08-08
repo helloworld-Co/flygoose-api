@@ -12,11 +12,10 @@ import (
 
 type SiteController struct {
 	comm.BaseComponent
-	SiteSrv *services.SiteService
 }
 
 func NewSiteController() *SiteController {
-	return &SiteController{SiteSrv: services.NewSiteService()}
+	return &SiteController{}
 }
 
 func (c *SiteController) BeforeActivation(b mvc.BeforeActivation) {
@@ -57,7 +56,7 @@ func (c *SiteController) CreateWebmasterInfo() {
 		UpdateTime: time.Now(),
 	}
 
-	err := c.SiteSrv.CreateWebmaster(&webmaster)
+	err := services.NewSiteService().CreateWebmaster(&webmaster)
 	if err != nil {
 		c.RespFailedMessage("创建失败")
 	} else {
@@ -143,7 +142,7 @@ func (c *SiteController) UpdateWebmasterInfo() {
 	fields = append(fields, "UpdateTime")
 	webmaster.UpdateTime = time.Now()
 
-	err := c.SiteSrv.UpdateWebmaster(id, fields, webmaster)
+	err := services.NewSiteService().UpdateWebmaster(id, fields, webmaster)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
@@ -152,7 +151,7 @@ func (c *SiteController) UpdateWebmasterInfo() {
 }
 
 func (c *SiteController) GetWebmasterInfoList() {
-	webmasters := c.SiteSrv.GetWebmasterInfoList()
+	webmasters := services.NewSiteService().GetWebmasterInfoList()
 	if webmasters == nil {
 		c.RespFailedMessage("还未创建站长信息")
 	} else {
@@ -163,7 +162,7 @@ func (c *SiteController) GetWebmasterInfoList() {
 }
 
 func (c *SiteController) GetWebmasterInfo() {
-	webmaster := c.SiteSrv.GetWebmasterInfo()
+	webmaster := services.NewSiteService().GetWebmasterInfo()
 	if webmaster == nil {
 		c.RespFailedMessage("还未创建站长信息")
 	} else {
@@ -172,13 +171,13 @@ func (c *SiteController) GetWebmasterInfo() {
 }
 
 func (c *SiteController) GetUsedSiteInfo() {
-	site := c.SiteSrv.GetUsedSiteInfo()
+	site := services.NewSiteService().GetUsedSiteInfo()
 	c.RespSuccess(site, "获取数据成功")
 }
 
 func (c *SiteController) GetSiteInfoList() {
 	//mengxianhou@20240122 这里只返回1个
-	firstSite := c.SiteSrv.GetUsedSiteInfo()
+	firstSite := services.NewSiteService().GetUsedSiteInfo()
 
 	result := make([]models.Site, 1)
 	result[0] = *firstSite
@@ -253,7 +252,7 @@ func (c *SiteController) UpdateSite() {
 	fields = append(fields, "UpdateTime")
 	site.UpdateTime = time.Now()
 
-	err := c.SiteSrv.UpdateSite(id, fields, site)
+	err := services.NewSiteService().UpdateSite(id, fields, site)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
@@ -299,7 +298,7 @@ func (c *SiteController) CreateSite() {
 		UpdateTime: time.Now(),
 	}
 
-	err := c.SiteSrv.CreateSite(&site)
+	err := services.NewSiteService().CreateSite(&site)
 	if err != nil {
 		c.RespFailedMessage("创建失败")
 	} else {

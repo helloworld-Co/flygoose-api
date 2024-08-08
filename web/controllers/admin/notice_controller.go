@@ -14,11 +14,10 @@ import (
 
 type NoticeController struct {
 	comm.BaseComponent
-	NoticeSrv *services.NoticeService
 }
 
 func NewNoticeController() *NoticeController {
-	return &NoticeController{NoticeSrv: services.NewNoticeService()}
+	return &NoticeController{}
 }
 
 func (c *NoticeController) BeforeActivation(b mvc.BeforeActivation) {
@@ -35,7 +34,7 @@ func (c *NoticeController) GetNoticeInfo() {
 		return
 	}
 
-	notice := c.NoticeSrv.GetNoticeInfo(id)
+	notice := services.NewNoticeService().GetNoticeInfo(id)
 	if notice == nil {
 		c.RespFailedMessage("通知不存在")
 	} else {
@@ -56,7 +55,7 @@ func (c *NoticeController) GetNoticeList() {
 		return
 	}
 
-	list, count := c.NoticeSrv.GetNoticeList(bean.Status, bean.PageNum, bean.PageSize)
+	list, count := services.NewNoticeService().GetNoticeList(bean.Status, bean.PageNum, bean.PageSize)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -110,7 +109,7 @@ func (c *NoticeController) Update() {
 		return
 	}
 
-	err := c.NoticeSrv.Update(id, fields, &m)
+	err := services.NewNoticeService().Update(id, fields, &m)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
@@ -154,7 +153,7 @@ func (c *NoticeController) Create() {
 	m.UpdateTime = time.Now()
 	m.Status = status
 
-	err = c.NoticeSrv.Create(&m)
+	err = services.NewNoticeService().Create(&m)
 	if err != nil {
 		c.RespFailedMessage("创建失败")
 	} else {

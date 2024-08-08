@@ -14,11 +14,10 @@ import (
 
 type LinkController struct {
 	comm.BaseComponent
-	LinkSrv *services.LinkService
 }
 
 func NewLinkController() *LinkController {
-	return &LinkController{LinkSrv: services.NewLinkService()}
+	return &LinkController{}
 }
 
 func (c *LinkController) BeforeActivation(b mvc.BeforeActivation) {
@@ -41,7 +40,7 @@ func (c *LinkController) GetLinkList() {
 		return
 	}
 
-	list, count := c.LinkSrv.GetLinkList(bean.Status, bean.PageNum, bean.PageSize)
+	list, count := services.NewLinkService().GetLinkList(bean.Status, bean.PageNum, bean.PageSize)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -55,7 +54,7 @@ func (c *LinkController) GetLinkInfo() {
 		return
 	}
 
-	link := c.LinkSrv.GetLinkInfo(id)
+	link := services.NewLinkService().GetLinkInfo(id)
 	if link == nil {
 		c.RespFailedMessage("友链不存在")
 	} else {
@@ -124,7 +123,7 @@ func (c *LinkController) Update() {
 	fields = append(fields, "UpdateTime")
 	link.UpdateTime = time.Now()
 
-	err := c.LinkSrv.Update(id, fields, link)
+	err := services.NewLinkService().Update(id, fields, link)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
@@ -159,7 +158,7 @@ func (c *LinkController) Create() {
 		ValidTime:  validTime,
 		Remark:     bean.Remark,
 	}
-	err := c.LinkSrv.Create(&link)
+	err := services.NewLinkService().Create(&link)
 	if err != nil {
 		c.RespFailedMessage("添加失败")
 	} else {

@@ -14,11 +14,10 @@ import (
 
 type BannerController struct {
 	comm.BaseComponent
-	BannerSrv *services.BannerService
 }
 
 func NewBannerController() *BannerController {
-	return &BannerController{BannerSrv: services.NewBannerService()}
+	return &BannerController{}
 }
 
 func (c *BannerController) BeforeActivation(b mvc.BeforeActivation) {
@@ -41,7 +40,7 @@ func (c *BannerController) GetBannerList() {
 		return
 	}
 
-	list, count := c.BannerSrv.GetBannerList(bean.Status, bean.PageNum, bean.PageSize)
+	list, count := services.NewBannerService().GetBannerList(bean.Status, bean.PageNum, bean.PageSize)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -55,7 +54,7 @@ func (c *BannerController) GetBannerInfo() {
 		return
 	}
 
-	banner := c.BannerSrv.GetBannerInfo(id)
+	banner := services.NewBannerService().GetBannerInfo(id)
 	if banner == nil {
 		c.RespFailedMessage("banner不存在")
 	} else {
@@ -111,7 +110,7 @@ func (c *BannerController) Update() {
 	fields = append(fields, "CreateTime")
 	banner.CreateTime = time.Now()
 
-	err := c.BannerSrv.Update(id, fields, banner)
+	err := services.NewBannerService().Update(id, fields, banner)
 	if err != nil {
 		c.RespFailedMessage("更新失败:" + err.Error())
 	} else {
@@ -140,7 +139,7 @@ func (c *BannerController) Create() {
 		CreateTime: time.Now(),
 	}
 
-	err := c.BannerSrv.Create(&banner)
+	err := services.NewBannerService().Create(&banner)
 	if err != nil {
 		c.RespFailedMessage("添加失败")
 	} else {
