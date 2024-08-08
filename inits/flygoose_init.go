@@ -12,6 +12,7 @@ import (
 	"flygoose/web/daos"
 	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/cors"
 	"github.com/kataras/iris/v12/mvc"
 	"go.uber.org/zap"
 	"path/filepath"
@@ -26,8 +27,15 @@ type FlygooseApp struct {
 func NewFlygooseApp(cfg *configs.Config) *FlygooseApp {
 	app := new(FlygooseApp)
 	app.Cfg = cfg
+	//app.Engine = iris.Default()
 	app.Engine = iris.New()
-	app.Engine.Use(Cors)
+	app.Engine.UseRouter(cors.New().
+		ExtractOriginFunc(cors.DefaultOriginExtractor).
+		ReferrerPolicy(cors.NoReferrerWhenDowngrade).
+		AllowOriginFunc(cors.AllowAnyOrigin).
+		AllowHeaders("token", "content-type", "Authorization").
+		ExposeHeaders("token", "content-type", "Authorization").
+		Handler())
 	return app
 }
 

@@ -13,8 +13,11 @@ import (
 func CheckAdminToken(ctx iris.Context) {
 	token := ctx.Request().Header.Get("token")
 	if token == "" {
-		ctx.JSON(comm.GooseEgg{Code: comm.CodeTokenExpired, Message: "无效的凭证"})
-		return
+		authorization := ctx.Request().Header.Get("Authorization")
+		if authorization == "" {
+			ctx.JSON(comm.GooseEgg{Code: comm.CodeTokenExpired, Message: "无效的凭证"})
+			return
+		}
 	}
 
 	var admin *models.Admin
