@@ -179,8 +179,8 @@ func (c *SiteController) GetSiteInfoList() {
 	//mengxianhou@20240122 这里只返回1个
 	firstSite := services.NewSiteService().GetUsedSiteInfo()
 
-	result := make([]models.Site, 1)
-	result[0] = *firstSite
+	result := make([]*models.Site, 1)
+	result[0] = firstSite
 	c.RespSuccess(iris.Map{
 		"list": result,
 	}, "获取数据成功")

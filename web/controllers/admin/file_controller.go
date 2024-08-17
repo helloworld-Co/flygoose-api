@@ -11,12 +11,11 @@ import (
 )
 
 type FileController struct {
-	Cfg *configs.Config
 	comm.BaseComponent
 }
 
-func NewFileController(cfg *configs.Config) *FileController {
-	return &FileController{Cfg: cfg}
+func NewFileController() *FileController {
+	return &FileController{}
 }
 
 func (c *FileController) BeforeActivation(b mvc.BeforeActivation) {
@@ -47,7 +46,7 @@ func (c *FileController) UploadImg() {
 		suffix = ".png"
 	}
 	//生成文件名
-	var absStaticImgDir = filepath.Join(c.Cfg.ExecuteDir, c.Cfg.StaticImgDir)
+	var absStaticImgDir = filepath.Join(configs.Cfg.ExecuteDir, configs.Cfg.StaticImgDir)
 	var newFileName = tools.GenNumberCode(12) + "." + suffix
 	var newAbsFilePath = filepath.Join(absStaticImgDir, newFileName)
 
@@ -58,6 +57,6 @@ func (c *FileController) UploadImg() {
 	}
 
 	c.RespSuccess(iris.Map{
-		"filename": filepath.Join(configs.Flygoose_Url_Prefix, c.Cfg.StaticImgDir, newFileName),
+		"filename": filepath.Join(configs.Cfg.StaticImgDir, newFileName),
 	}, "上传文件成功")
 }
