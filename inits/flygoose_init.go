@@ -27,14 +27,14 @@ type FlygooseApp struct {
 func NewFlygooseApp(cfg *configs.Config) *FlygooseApp {
 	app := new(FlygooseApp)
 	app.Cfg = cfg
-	//app.Engine = iris.Default()
+	// app.Engine = iris.Default()
 	app.Engine = iris.New()
 	app.Engine.UseRouter(cors.New().
 		ExtractOriginFunc(cors.DefaultOriginExtractor).
 		ReferrerPolicy(cors.NoReferrerWhenDowngrade).
 		AllowOriginFunc(cors.AllowAnyOrigin).
-		AllowHeaders("token", "content-type", "Authorization").
-		ExposeHeaders("token", "content-type", "Authorization").
+		AllowHeaders("token", "content-type", "Authorization", "X-Requested-With").
+		ExposeHeaders("token", "content-type", "Authorization", "X-Requested-With").
 		Handler())
 	return app
 }
@@ -56,17 +56,17 @@ func (m *FlygooseApp) run() {
 }
 
 func (m *FlygooseApp) InitDir() {
-	//初始化可执行文件所在目录
+	// 初始化可执行文件所在目录
 	m.Cfg.ExecuteDir = tools.GetExecuteDir()
 	m.Cfg.StaticDir = "/static"
 	m.Cfg.StaticImgDir = "/static/img"
 
-	//创建相应的文件目录
+	// 创建相应的文件目录
 	tools.CreateDir(filepath.Join(m.Cfg.ExecuteDir, m.Cfg.StaticDir))
 	tools.CreateDir(filepath.Join(m.Cfg.ExecuteDir, m.Cfg.StaticImgDir))
 
 	var abcStaticDir = filepath.Join(m.Cfg.ExecuteDir, m.Cfg.StaticDir)
-	m.Engine.HandleDir("/", abcStaticDir) //http://192.168.1.6:29090/img/aa.jpg
+	m.Engine.HandleDir("/", abcStaticDir) // http://192.168.1.6:29090/img/aa.jpg
 }
 
 func (m *FlygooseApp) initLog() {
@@ -132,21 +132,22 @@ func (m *FlygooseApp) initAutoMigrate() {
 
 func (m *FlygooseApp) initRouter() {
 	v1 := m.Engine.Party(configs.Flygoose_Url_Prefix)
+	v1.RegisterDependency(m.Cfg) // 依赖注入
 	{
 		mvc.New(v1.Party("/site")).Handle(flygoose.NewSiteController())
 		mvc.New(v1.Party("/blog")).Handle(flygoose.NewBlogController())
 		mvc.New(v1.Party("/special")).Handle(flygoose.NewSpecialController())
 
-		mvc.New(v1.Party("/health")).Handle(admin.NewHealthController())                 //健康检查
-		mvc.New(v1.Party("/admin/access")).Handle(admin.NewAccessController())           //访问相关接口
-		mvc.New(v1.Party("/admin/blog")).Handle(admin.NewBlogController())               //博客相关接口
-		mvc.New(v1.Party("/admin/link")).Handle(admin.NewLinkController())               //友链相关接口
-		mvc.New(v1.Party("/admin/site")).Handle(admin.NewSiteController())               //网站信息相关接口
-		mvc.New(v1.Party("/admin/category")).Handle(admin.NewCategoryController())       //博客分类相关接口
-		mvc.New(v1.Party("/admin/notice")).Handle(admin.NewNoticeController())           //公告分类相关接口
-		mvc.New(v1.Party("/admin/special")).Handle(admin.NewSpecialController())         //专栏相关接口
-		mvc.New(v1.Party("/admin/file")).Handle(admin.NewFileController(m.Cfg))          //文件相关接口
-		mvc.New(v1.Party("/admin/banner")).Handle(admin.NewBannerController())           //轮播图相关接口
-		mvc.New(v1.Party("/admin/workStation")).Handle(admin.NewWorkStationController()) //统计数据
+		mvc.New(v1.Party("/health")).Handle(admin.NewHealthController())                 // 健康检查
+		mvc.New(v1.Party("/admin/access")).Handle(admin.NewAccessController())           // 访问相关接口
+		mvc.New(v1.Party("/admin/blog")).Handle(admin.NewBlogController())               // 博客相关接口
+		mvc.New(v1.Party("/admin/link")).Handle(admin.NewLinkController())               // 友链相关接口
+		mvc.New(v1.Party("/admin/site")).Handle(admin.NewSiteController())               // 网站信息相关接口
+		mvc.New(v1.Party("/admin/category")).Handle(admin.NewCategoryController())       // 博客分类相关接口
+		mvc.New(v1.Party("/admin/notice")).Handle(admin.NewNoticeController())           // 公告分类相关接口
+		mvc.New(v1.Party("/admin/special")).Handle(admin.NewSpecialController())         // 专栏相关接口
+		mvc.New(v1.Party("/admin/file")).Handle(admin.NewFileController())               // 文件相关接口
+		mvc.New(v1.Party("/admin/banner")).Handle(admin.NewBannerController())           // 轮播图相关接口
+		mvc.New(v1.Party("/admin/workStation")).Handle(admin.NewWorkStationController()) // 统计数据
 	}
 }
