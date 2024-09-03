@@ -14,11 +14,10 @@ import (
 
 type SpecialController struct {
 	comm.BaseComponent
-	Srv *services.SpecialService
 }
 
 func NewSpecialController() *SpecialController {
-	return &SpecialController{Srv: services.NewSpecialService()}
+	return &SpecialController{}
 }
 
 func (c *SpecialController) BeforeActivation(b mvc.BeforeActivation) {
@@ -45,7 +44,7 @@ func (c *SpecialController) GetSectionDetail() {
 		return
 	}
 
-	section, err := c.Srv.GetSectionDetail(param.SectionId)
+	section, err := services.NewSpecialService().GetSectionDetail(param.SectionId)
 	if err != nil {
 		c.RespFailedMessage("获取失败：" + err.Error())
 		return
@@ -73,7 +72,7 @@ func (c *SpecialController) GetSectionList() {
 		return
 	}
 
-	list, count := c.Srv.GetSectionList(specialId, status)
+	list, count := services.NewSpecialService().GetSectionList(specialId, status)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -144,7 +143,7 @@ func (c *SpecialController) UpdateSection() {
 		fields = append(fields, "PublishTime")
 	}
 
-	err := c.Srv.UpdateSection(specialId, sectionId, fields, section)
+	err := services.NewSpecialService().UpdateSection(specialId, sectionId, fields, section)
 	if err != nil {
 		c.RespFailedMessage("更新失败:" + err.Error())
 	} else {
@@ -165,7 +164,7 @@ func (c *SpecialController) AddSection() {
 		return
 	}
 
-	section, err := c.Srv.AddSection(&param)
+	section, err := services.NewSpecialService().AddSection(&param)
 	if err != nil {
 		c.RespFailedMessage("添加失败:" + err.Error())
 	} else {
@@ -186,7 +185,7 @@ func (c *SpecialController) SearchSpecial() {
 		return
 	}
 
-	list, count := c.Srv.SearchSpecial(&param)
+	list, count := services.NewSpecialService().SearchSpecial(&param)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -241,7 +240,7 @@ func (c *SpecialController) Update() {
 	fields = append(fields, "UpdateTime")
 	special.UpdateTime = time.Now()
 
-	err := c.Srv.Update(id, fields, special)
+	err := services.NewSpecialService().Update(id, fields, special)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
@@ -262,7 +261,7 @@ func (c *SpecialController) Create() {
 		return
 	}
 
-	special, err := c.Srv.Create(&param)
+	special, err := services.NewSpecialService().Create(&param)
 	if err != nil {
 		c.RespFailedMessage("创建失败")
 	} else {

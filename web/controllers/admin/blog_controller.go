@@ -16,11 +16,10 @@ import (
 
 type BlogController struct {
 	comm.BaseComponent
-	BlogSrv *services.BlogService
 }
 
 func NewBlogController() *BlogController {
-	return &BlogController{BlogSrv: services.NewBlogService()}
+	return &BlogController{}
 }
 
 func (c *BlogController) BeforeActivation(b mvc.BeforeActivation) {
@@ -72,7 +71,7 @@ func (c *BlogController) CreateBlog() {
 		}
 	}
 
-	err := c.BlogSrv.CreateBlog(&blog)
+	err := services.NewBlogService().CreateBlog(&blog)
 	if err != nil {
 		c.RespFailedMessage("创建失败")
 	} else {
@@ -152,7 +151,7 @@ func (c *BlogController) UpdateBlog() {
 	fields = append(fields, "UpdateTime")
 	blog.UpdateTime = time.Now()
 
-	err := c.BlogSrv.UpdateBlog(id, fields, blog)
+	err := services.NewBlogService().UpdateBlog(id, fields, blog)
 	if err != nil {
 		c.RespFailedMessage("更新失败:" + err.Error())
 	} else {
@@ -173,7 +172,7 @@ func (c *BlogController) UpdateBlogStatus() {
 		return
 	}
 
-	err := c.BlogSrv.UpdateBlogStatus(bean.Id, models.BlogStatus(bean.Status))
+	err := services.NewBlogService().UpdateBlogStatus(bean.Id, models.BlogStatus(bean.Status))
 	if err != nil {
 		c.RespFailedMessage("更新博客状态出错")
 	} else {
@@ -259,9 +258,9 @@ func (c *BlogController) PublishBlog() {
 	if id <= 0 { //没有blog id ,所以新建一个博客,并且把状态改为 models.BlogStatusPublished
 		blog.CreateTime = time.Now()
 		fields = append(fields, "CreateTime")
-		err = c.BlogSrv.CreateBlog(blog)
+		err = services.NewBlogService().CreateBlog(blog)
 	} else {
-		err = c.BlogSrv.UpdateBlog(id, fields, blog)
+		err = services.NewBlogService().UpdateBlog(id, fields, blog)
 	}
 
 	if err != nil {
@@ -284,7 +283,7 @@ func (c *BlogController) GetBlogListByStatus() {
 		return
 	}
 
-	list, count := c.BlogSrv.GetBlogListByStatus(bean.Status, bean.PageNum, bean.PageSize)
+	list, count := services.NewBlogService().GetBlogListByStatus(bean.Status, bean.PageNum, bean.PageSize)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -304,7 +303,7 @@ func (c *BlogController) GetBlogListByWord() {
 		return
 	}
 
-	list, count := c.BlogSrv.GetBlogListByWord(bean.Word, bean.PageNum, bean.PageSize)
+	list, count := services.NewBlogService().GetBlogListByWord(bean.Word, bean.PageNum, bean.PageSize)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -324,7 +323,7 @@ func (c *BlogController) SearchBlog() {
 		return
 	}
 
-	list, count := c.BlogSrv.SearchBlog(&bean)
+	list, count := services.NewBlogService().SearchBlog(&bean)
 	c.RespSuccess(iris.Map{
 		"list":  list,
 		"count": count,
@@ -344,7 +343,7 @@ func (c *BlogController) GetBlogDetail() {
 		return
 	}
 
-	blog, _ := c.BlogSrv.GetBlogDetail(bean.Id)
+	blog, _ := services.NewBlogService().GetBlogDetail(bean.Id)
 	if blog == nil {
 		c.RespFailedMessage("博客不存在")
 	} else {

@@ -9,11 +9,10 @@ import (
 
 type WorkStationController struct {
 	comm.BaseComponent
-	Srv *services.SpecialService
 }
 
 func NewWorkStationController() *WorkStationController {
-	return &WorkStationController{Srv: services.NewSpecialService()}
+	return &WorkStationController{}
 }
 
 func (c *WorkStationController) BeforeActivation(b mvc.BeforeActivation) {

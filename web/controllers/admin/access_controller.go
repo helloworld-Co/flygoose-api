@@ -9,11 +9,10 @@ import (
 
 type AccessController struct {
 	comm.BaseComponent
-	AccessSrv *services.AccessService
 }
 
 func NewAccessController() *AccessController {
-	return &AccessController{AccessSrv: services.NewAccessService()}
+	return &AccessController{}
 }
 
 func (c *AccessController) BeforeActivation(b mvc.BeforeActivation) {
@@ -34,7 +33,7 @@ func (c *AccessController) Login() {
 		return
 	}
 
-	ok, str := c.AccessSrv.LoginIn(username, password)
+	ok, str := services.NewAccessService().LoginIn(username, password)
 	if !ok {
 		c.RespFailedMessage("登录失败：" + str)
 		return
@@ -48,17 +47,20 @@ func (c *AccessController) Login() {
 func (c *AccessController) Logout() {
 	token := c.Ctx.Request().Header.Get("token")
 	if token == "" {
-		c.RespFailedMessage("token参数错误")
-		return
+		authorization := c.Ctx.Request().Header.Get("Authorization")
+		if authorization == "" {
+			c.RespFailedMessage("token参数错误")
+			return
+		}
 	}
 
-	admin, err := c.AccessSrv.FirstAdminByToken(token)
+	admin, err := services.NewAccessService().FirstAdminByToken(token)
 	if admin == nil || err != nil {
 		c.RespFailedMessage("退出失败，无此管理账户")
 		return
 	}
 
-	err = c.AccessSrv.Logout(admin.ID)
+	err = services.NewAccessService().Logout(admin.ID)
 	if err != nil {
 		c.RespFailedMessage(err.Error())
 	} else {

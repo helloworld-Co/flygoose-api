@@ -26,7 +26,7 @@ func (c *SpecialController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *SpecialController) GetSectionDetail() {
 	var param beans.GetSectionParam
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
@@ -52,14 +52,23 @@ func (c *SpecialController) GetSectionDetail() {
 }
 
 func (c *SpecialController) GetSpecialDetail() {
-	specialId, exist := c.PostFormInt64Default("specialId")
-	if !exist || specialId == 0 {
+	type Param struct {
+		SpecialId int64 `json:"specialId" validate:"required"`
+	}
+
+	var param Param
+	if err := c.Ctx.ReadJSON(&param); err != nil {
+		c.RespFailedMessage("参数错误: " + err.Error())
+		return
+	}
+
+	if param.SpecialId == 0 {
 		c.RespFailedMessage("参数错误")
 		return
 	}
 
 	srv := services.NewSpecialService()
-	special, list := srv.GetSpecialDetail(specialId)
+	special, list := srv.GetSpecialDetail(param.SpecialId)
 	c.RespSuccess(iris.Map{
 		"special": special,
 		"list":    list,
@@ -73,7 +82,7 @@ func (c *SpecialController) GetSpecialList() {
 	}
 
 	var param Param
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}

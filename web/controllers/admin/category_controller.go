@@ -14,11 +14,10 @@ import (
 
 type CategoryController struct {
 	comm.BaseComponent
-	CategorySrv *services.CategoryService
 }
 
 func NewCategoryController() *CategoryController {
-	return &CategoryController{CategorySrv: services.NewCategoryService()}
+	return &CategoryController{}
 }
 
 func (c *CategoryController) BeforeActivation(b mvc.BeforeActivation) {
@@ -40,7 +39,7 @@ func (c *CategoryController) GetCategoryList() {
 		return
 	}
 
-	list := c.CategorySrv.GetCategoryList(bean.Status)
+	list := services.NewCategoryService().GetCategoryList(bean.Status)
 	c.RespSuccess(iris.Map{
 		"list": list,
 	}, "获取成功")
@@ -67,7 +66,7 @@ func (c *CategoryController) Create() {
 	cate.CreateTime = time.Now()
 	cate.UpdateTime = time.Now()
 
-	err = c.CategorySrv.Create(&cate)
+	err = services.NewCategoryService().Create(&cate)
 	if err != nil {
 		c.RespFailedMessage("创建分类失败")
 	} else {
@@ -136,7 +135,7 @@ func (c *CategoryController) Update() {
 		cate.UpdateTime = time.Now()
 	}
 
-	err := c.CategorySrv.Update(id, fields, &cate)
+	err := services.NewCategoryService().Update(id, fields, &cate)
 	if err != nil {
 		c.RespFailedMessage("更新失败")
 	} else {
