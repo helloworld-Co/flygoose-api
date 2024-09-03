@@ -19,6 +19,9 @@ func main() {
 		return
 	}
 
+	// 全局保存配置文件
+	configs.Cfg = cfg
+
 	//生成应用程序
 	flygoose := inits.NewFlygooseApp(cfg)
 	flygoose.Start()

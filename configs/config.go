@@ -10,7 +10,7 @@ import (
 )
 
 // 全局配置文件实例
-var Cfg Config
+var Cfg *Config
 
 type Config struct {
 	Http         HttpCfg     `yaml:"http"`

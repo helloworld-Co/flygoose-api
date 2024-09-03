@@ -30,7 +30,7 @@ func (c *BlogController) BeforeActivation(b mvc.BeforeActivation) {
 
 func (c *BlogController) SearchBlog() {
 	var param beans.SearchBlogBean
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
@@ -61,7 +61,7 @@ func (c *BlogController) GetBlogListByTag() {
 	}
 
 	var param Param
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
@@ -94,7 +94,7 @@ func (c *BlogController) GetCateBlogList() {
 	}
 
 	var param Param
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
@@ -122,7 +122,7 @@ func (c *BlogController) GetBlogListByAction() {
 	}
 
 	var param Param
-	if err := c.Ctx.ReadForm(&param); err != nil {
+	if err := c.Ctx.ReadJSON(&param); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
@@ -149,7 +149,7 @@ func (c *BlogController) GetCateList() {
 
 func (c *BlogController) GetBlogDetail() {
 	var bean beans.GetBlogDetailBean
-	if err := c.Ctx.ReadForm(&bean); err != nil {
+	if err := c.Ctx.ReadJSON(&bean); err != nil {
 		c.RespFailedMessage("参数错误: " + err.Error())
 		return
 	}
