@@ -1,13 +1,12 @@
 # 飞鹅博客部署
 ## 一、准备工作
-+ 服务器或者云主机
-+ 已备案的域名（最好有）
++ 服务器或者云主机（如果没有，个人PC装个虚拟机也可以用）
 
 ## 一、后端部署
 ### 1.1 本部署文档环境说明
 + OS：ubuntu 22.04
 + MySql 8.0+
-+ CPU制造商为Intel，指令集为x86_64
++ CPU制造商为Intel，指令集为x86_64，名称为amd64
 
 > 说明：以下命令，如果使用root账户执行，则无需添加sudo，若是非root账户执行，需要添加sudo，本示例使用非root账户执行
 
@@ -104,6 +103,46 @@ curl localhost:29090/api/health
 ```
 
 
-## 二、前端部署
 
-TODO
+至此已完成基本的部署
+
+如果你有服务器或者云主机并且具备基本的运维能力，可以继续完成以下配置。
+
+注意：
+
+1. 域名需要一定的RMB
+2. CA证书有些平台免费，有些平台付费
+3. 服务器或者云主机需要一定的RMB
+4. 域名解析的话云服务商大多都有免费的解析可以白嫖
+
+### 1.6 Nginx转发
+
+安装Nginx
+
+配置Nginx转发
+
+### 1.7 域名解析
+
+如果有域名，可以开启HTTPS并解析到你的服务器
+
+### 1.8 Nginx配置HTTPS证书
+
+将你的域名CA证书配置到Nginx
+
+## 附录1 打包命令参考
+
+```shell
+# windows Intel芯片
+GOOS=windows GOARCH=amd64 go build -o flygoose-api-2.0-win-amd64.exe
+# windows 支持arm指令集芯片
+GOOS=windows GOARCH=arm64 go build -o flygoose-api-2.0-win-arm64.exe
+# linux Intel芯片
+GOOS=linux GOARCH=amd64 go build -o flygoose-api-2.0-linux-amd64
+# linux 支持arm指令集芯片，如海思麒麟
+GOOS=linux GOARCH=arm64 go build -o flygoose-api-2.0-linux-arm64
+# mac os 苹果芯片
+GOOS=darwin GOARCH=arm64 go build -o flygoose-api-2.0-darwin-arm64
+# mac os Intel芯片
+GOOS=darwin GOARCH=amd64 go build -o flygoose-api-2.0-darwin-amd64
+```
+
